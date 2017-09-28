@@ -1,0 +1,18 @@
+factRec :: (Integer -> Integer) -> (Integer -> Integer)
+factRec f 0 = 1
+factRec f m = m * f (m-1)
+
+factFP = factRec factFP
+
+Evaluate factFP 4 by hand.
+Formulate an explanation for why factRec should actually define the factorial function.
+
+factFP 4 = 4 * factFP(3)
+         = 4 * 3 * factFP(2)
+         = 4 * 3 * 2 * factFP(1)
+         = 4 * 3 * 2 * 1 * factFP(0)
+         = 4 * 3 * 2 * 1 * 1
+
+factFP defines the factorial function by recursion. It multiplies the initial value by factFP
+of the next lowest value, recurring until it decrements to 0, at which point it multiplies by 1.
+This returns the product of every integer from 1 to m.
