@@ -161,20 +161,20 @@ Interpretations of integer and boolean expressions
 -- I have written things this way to make integer and boolean calculations
 -- easier to code.
 
-aBinOps =
+arithBinOps =
   [ (Add, (+))
   , (Sub, (-))
   , (Mul, (*))
   , (Div, div)
   , (Mod, mod)]
 
-aUnOps =  [(Neg, negate)]
+arithUnOps =  [(Neg, negate)]
 
-bBinOps =
+boolBinOps =
   [ (And, (&&))
   , (Or, (||))]
 
-bUnOps =  [(Not, not)]
+boolUnOps =  [(Not, not)]
 
 relnOps =
   [ (Greater, (>))
@@ -191,25 +191,26 @@ relnOps =
 --   impossible AST).
 -- So it is safe to unwrap a result of the form (Just ...)
 -- The combination of fromMaybe with (error ...) does that
-opLookup :: Eq const => const -> [(const, sem)] -> sem
-opLookup op opTable =
+operLookup :: Eq const => const -> [(const, sem)] -> sem
+operLookup op opTable =
   fromMaybe (error "Undefined operator. Should never happen.")
             (lookup op opTable)
 
 -- This defines the translation of a BExpr into a computation of Booleans
+-- Need to look up operation using table
 boolCalc :: BExpr -> BoolCalc
 boolCalc (BoolConst b) = return b
 boolCalc (Reln cOp expr1 expr2)
-  = liftA2 (opLookup cOp relnOps) (intCalc expr1) (intCalc expr2)
+  = liftA2 (operLookup cOp relnOps) (intCalc expr1) (intCalc expr2)
 boolCalc (BBin op expr1 expr2)
-  = liftA2 (opLookup op bBinOps) (boolCalc expr1) (boolCalc expr2)
+  = liftA2 (operLookup op boolBinOps) (boolCalc expr1) (boolCalc expr2)
 boolCalc (BUn op expr)
-  = fmap (opLookup op bUnOps) (boolCalc expr)
+  = fmap (operLookup op boolUnOps) (boolCalc expr)
 
 intCalc :: AExpr -> IntCalc
 intCalc (Var v) = retrieveEnv v
 intCalc (IntConst val) = return val
 intCalc (ABin op expr1 expr2)
-  = liftA2 (opLookup op aBinOps) (intCalc expr1) (intCalc expr2)
+  = liftA2 (operLookup op arithBinOps) (intCalc expr1) (intCalc expr2)
 intCalc (AUn op expr)
-  = fmap (opLookup op aUnOps) (intCalc expr)
+  = fmap (operLookup op arithUnOps) (intCalc expr)
