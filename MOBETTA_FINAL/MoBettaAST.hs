@@ -36,7 +36,6 @@ data Comp
   | NEqual
   deriving (Show,Eq)
 
--- Refactored to reduce the number of cases in evaluation.
 data AExpr
   = Var String
   | IntConst Integer

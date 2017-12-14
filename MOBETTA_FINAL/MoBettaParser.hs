@@ -11,10 +11,7 @@ import Data.Void
 
 import MoBettaAST
 
--- Simplest use of Parsec is all we need.
-
 type Parser = Parsec Void String
-
 
 programParser = do
   spaceConsumer
@@ -132,7 +129,6 @@ rparen = lexeme (char ')')
 semicolon = lexeme (char ';')
 lbrace = lexeme (char '{')
 rbrace = lexeme (char '}')
-
 
 identifier :: Parser String
 identifier = (lexeme . try) p
